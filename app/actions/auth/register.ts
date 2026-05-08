@@ -4,14 +4,10 @@ import { prisma } from "@/lib/db"
 import * as bcrypt from "bcryptjs"
 import { z } from "zod"
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-})
+import { RegisterSchema } from "@/schemas"
 
-export async function registerUser(values: z.infer<typeof registerSchema>) {
-  const parsed = registerSchema.safeParse(values)
+export async function registerUser(values: z.infer<typeof RegisterSchema>) {
+  const parsed = RegisterSchema.safeParse(values)
 
   if (!parsed.success) {
     return { error: "Invalid fields" }

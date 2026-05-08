@@ -15,23 +15,15 @@ import { Label } from "@/components/ui/label"
 import { AuthLayout } from "@/components/auth-layout"
 import { registerUser } from "@/app/actions/auth/register"
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-})
+import { RegisterFormSchema } from "@/schemas"
 
-type RegisterFormValues = z.infer<typeof registerSchema>
+type RegisterFormValues = z.infer<typeof RegisterFormSchema>
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(RegisterFormSchema),
     defaultValues: {
       name: "",
       email: "",

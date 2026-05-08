@@ -36,11 +36,57 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      // Allow OAuth without 2FA for now
+      if (account?.provider !== "credentials") return true;
+
+      const existingUser = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+
+      // Prevent sign in without 2FA confirmation if enabled
+      if (existingUser?.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique({
+          where: { userId: existingUser.id },
+        });
+
+        if (!twoFactorConfirmation) return false;
+
+        // Delete two factor confirmation for next sign in
+        await prisma.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        });
+      }
+
+      return true;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
+
+      if (token.role && session.user) {
+        session.user.role = token.role as string;
+      }
+      
+      if (session.user) {
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
       return session;
+    },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+
+      const existingUser = await prisma.user.findUnique({
+        where: { id: token.sub },
+      });
+
+      if (!existingUser) return token;
+
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+
+      return token;
     },
   },
 });
