@@ -1,24 +1,62 @@
 "use client"
 
-import { useState, type SyntheticEvent } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthLayout } from "@/components/auth-layout"
 
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
+
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
 
-  async function onSubmit(event: SyntheticEvent) {
-    event.preventDefault()
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
+  async function onSubmit(data: LoginFormValues) {
     setIsLoading(true)
+    
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
 
-    setTimeout(() => {
+      if (result?.error) {
+        toast.error("Invalid credentials")
+        setIsLoading(false)
+        return
+      }
+
+      router.push("/dashboard")
+      router.refresh()
+    } catch {
+      toast.error("Something went wrong. Please try again.")
       setIsLoading(false)
-    }, 3000)
+    }
+
   }
 
   return (
@@ -30,10 +68,12 @@ export default function LoginPage() {
       alternateLink={{ text: "Sign Up", href: "/register" }}
     >
       <div className="grid gap-6">
-        <form onSubmit={onSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className={form.formState.errors.email ? "text-destructive" : ""}>
+                Email
+              </Label>
               <Input
                 id="email"
                 placeholder="name@example.com"
@@ -42,10 +82,19 @@ export default function LoginPage() {
                 autoComplete="email"
                 autoCorrect="off"
                 disabled={isLoading}
+                {...form.register("email")}
+                className={form.formState.errors.email ? "border-destructive focus-visible:ring-destructive/20" : ""}
               />
+              {form.formState.errors.email && (
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className={form.formState.errors.password ? "text-destructive" : ""}>
+                Password
+              </Label>
               <Input
                 id="password"
                 placeholder="Password"
@@ -54,9 +103,16 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 autoCorrect="off"
                 disabled={isLoading}
+                {...form.register("password")}
+                className={form.formState.errors.password ? "border-destructive focus-visible:ring-destructive/20" : ""}
               />
+              {form.formState.errors.password && (
+                <p className="text-[0.8rem] font-medium text-destructive">
+                  {form.formState.errors.password.message}
+                </p>
+              )}
             </div>
-            <Button disabled={isLoading}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>

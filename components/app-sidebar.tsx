@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { type ComponentProps } from "react"
 import Link from "next/link"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -154,7 +154,7 @@ const data = {
   documents: [],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar 
       // Options: 
