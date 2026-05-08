@@ -15,14 +15,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon } from "lucide-react"
 import { Logo } from "@/components/logo"
-import { useSidebar } from "@/components/ui/sidebar"
 
 function SidebarLogo() {
   const { state } = useSidebar()
-  return <Logo size="md" text="Acme Inc." showText={state !== "collapsed"} />
+  return <Logo size="sm" label="Acme Inc." withText={false} iconOnly={state === "collapsed"} />
+
 }
 
 const data = {

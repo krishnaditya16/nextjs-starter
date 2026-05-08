@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db"
 import * as bcrypt from "bcryptjs"
 import { z } from "zod"
 import { v4 as uuidv4 } from "uuid"
+import { sendPasswordResetEmail } from "@/lib/mail"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -52,16 +53,15 @@ export async function requestPasswordReset(email: string) {
       },
     })
 
-    const resetLink = `${process.env.APP_URL}/reset-password?token=${token}`
-    console.log(`Password reset link for ${email}: ${resetLink}`)
+    // Send reset email
+    await sendPasswordResetEmail(email, token)
 
     return { success: "If an account exists, a reset link has been sent." }
   } catch (error) {
-    console.error("DEBUG: Password reset request error:", error)
-    return { error: "Something went wrong. Check server logs." }
+    console.error("Password reset request error:", error)
+    return { error: "Something went wrong" }
   }
 }
-
 
 export async function resetPassword(values: z.infer<typeof resetPasswordSchema>) {
   const parsed = resetPasswordSchema.safeParse(values)
