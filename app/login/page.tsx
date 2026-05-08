@@ -92,9 +92,18 @@ export default function LoginPage() {
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password" className={form.formState.errors.password ? "text-destructive" : ""}>
-                Password
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className={form.formState.errors.password ? "text-destructive" : ""}>
+                  Password
+                </Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+
               <Input
                 id="password"
                 placeholder="Password"

@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthLayout } from "@/components/auth-layout"
-import { registerUser } from "@/app/actions/register"
+import { registerUser } from "@/app/actions/auth/register"
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

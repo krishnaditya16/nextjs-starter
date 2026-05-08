@@ -2,21 +2,24 @@ import { auth } from "@/lib/auth";
 
 export default auth((req) => {
   const isAuth = !!req.auth;
-  const isPublicPage = 
+  const isAuthPage = 
     req.nextUrl.pathname.startsWith("/login") || 
-    req.nextUrl.pathname.startsWith("/register") || 
-    req.nextUrl.pathname.startsWith("/api/auth");
+    req.nextUrl.pathname.startsWith("/register") ||
+    req.nextUrl.pathname.startsWith("/forgot-password") ||
+    req.nextUrl.pathname.startsWith("/reset-password");
+  
+  const isProtectedRoute = req.nextUrl.pathname.startsWith("/dashboard");
 
-  if (isPublicPage) {
-    // If logged in, don't allow access to login/register pages
-    if (isAuth && !req.nextUrl.pathname.startsWith("/api/auth")) {
+  if (isAuthPage) {
+    // If logged in, don't allow access to login/register/forgot/reset pages
+    if (isAuth) {
       return Response.redirect(new URL("/dashboard", req.nextUrl));
     }
     return null;
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuth) {
+  // Only protect dashboard routes for now
+  if (isProtectedRoute && !isAuth) {
     return Response.redirect(new URL("/login", req.nextUrl));
   }
 });
