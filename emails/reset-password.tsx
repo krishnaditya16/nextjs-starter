@@ -18,8 +18,8 @@ interface ResetPasswordEmailProps {
   resetLink: string;
 }
 
-const baseUrl = process.env.APP_URL ? process.env.APP_URL : "";
-const appName = process.env.APP_NAME || "Acme Inc";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL ? process.env.NEXT_PUBLIC_APP_URL : "";
+const appName = process.env.NEXT_PUBLIC_APP_NAME || "Acme Inc";
 
 export const ResetPasswordEmail = ({
   resetLink,

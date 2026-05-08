@@ -1,8 +1,14 @@
+import { Metadata } from "next"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 
 import data from "@/data/dashboard.json"
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Overview of your account and statistics",
+}
 
 export default function Page() {
   return (

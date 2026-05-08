@@ -15,7 +15,7 @@ export function Logo({
   withText = false,
   iconOnly = false,
   icon,
-  label = "Acme Inc",
+  label = process.env.NEXT_PUBLIC_APP_NAME || "Acme Inc",
   size = "md",
   className,
   ...props

@@ -8,12 +8,10 @@ import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Suspense } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { AuthLayout } from "@/components/auth-layout"
 import { resetPassword } from "@/app/actions/auth/reset-password"
 
 const resetPasswordSchema = z.object({
@@ -26,7 +24,7 @@ const resetPasswordSchema = z.object({
 
 type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
 
-function ResetPasswordForm() {
+export function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -132,21 +130,5 @@ function ResetPasswordForm() {
         </div>
       </form>
     </div>
-  )
-}
-
-export default function ResetPasswordPage() {
-  return (
-    <AuthLayout
-      title="Reset Password"
-      description="Enter your new password below"
-      quote="Sometimes we need a fresh start. This process ensures you can regain control of your account with a secure new password."
-      quoteAuthor="Seneca"
-      alternateLink={{ text: "Sign In", href: "/login" }}
-    >
-      <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>}>
-        <ResetPasswordForm />
-      </Suspense>
-    </AuthLayout>
   )
 }

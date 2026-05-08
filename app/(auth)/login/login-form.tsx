@@ -3,8 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -13,57 +14,44 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthLayout } from "@/components/auth-layout"
-import { registerUser } from "@/app/actions/auth/register"
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
 })
 
-type RegisterFormValues = z.infer<typeof registerSchema>
+type LoginFormValues = z.infer<typeof loginSchema>
 
-export default function RegisterPage() {
+export function LoginForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter()
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   })
 
-  async function onSubmit(data: RegisterFormValues) {
+  async function onSubmit(data: LoginFormValues) {
     setIsLoading(true)
     
     try {
-      const result = await registerUser({
-        name: data.name,
+      const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
+        redirect: false,
       })
 
-      if (result.error) {
-        toast.error(result.error)
+      if (result?.error) {
+        toast.error("Invalid credentials")
         setIsLoading(false)
         return
       }
 
-      toast.success("Account created! Logging you in...")
-      
-      // Auto login after registration
-      await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        callbackUrl: "/dashboard",
-      })
+      router.push("/dashboard")
+      router.refresh()
     } catch {
       toast.error("Something went wrong. Please try again.")
       setIsLoading(false)
@@ -72,36 +60,15 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Create an account"
-      description="Enter your details below to create your account"
-      quote="The implementation was seamless and the results were immediate. I couldn't be happier with the platform."
-      quoteAuthor="Alex Rivera"
-      alternateLink={{ text: "Sign In", href: "/login" }}
+      title="Sign In"
+      description="Enter your email and password to sign in"
+      quote="This library has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before."
+      quoteAuthor="Sofia Davis"
+      alternateLink={{ text: "Sign Up", href: "/register" }}
     >
       <div className="grid gap-6">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className={form.formState.errors.name ? "text-destructive" : ""}>
-                Full Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="John Doe"
-                type="text"
-                autoCapitalize="words"
-                autoComplete="name"
-                autoCorrect="off"
-                disabled={isLoading}
-                {...form.register("name")}
-                className={form.formState.errors.name ? "border-destructive focus-visible:ring-destructive/20" : ""}
-              />
-              {form.formState.errors.name && (
-                <p className="text-[0.8rem] font-medium text-destructive">
-                  {form.formState.errors.name.message}
-                </p>
-              )}
-            </div>
             <div className="grid gap-2">
               <Label htmlFor="email" className={form.formState.errors.email ? "text-destructive" : ""}>
                 Email
@@ -124,15 +91,24 @@ export default function RegisterPage() {
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password" className={form.formState.errors.password ? "text-destructive" : ""}>
-                Password
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className={form.formState.errors.password ? "text-destructive" : ""}>
+                  Password
+                </Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+
               <Input
                 id="password"
                 placeholder="Password"
                 type="password"
                 autoCapitalize="none"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 autoCorrect="off"
                 disabled={isLoading}
                 {...form.register("password")}
@@ -144,42 +120,21 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword" className={form.formState.errors.confirmPassword ? "text-destructive" : ""}>
-                Confirm Password
-              </Label>
-              <Input
-                id="confirmPassword"
-                placeholder="Confirm Password"
-                type="password"
-                autoCapitalize="none"
-                autoComplete="new-password"
-                autoCorrect="off"
-                disabled={isLoading}
-                {...form.register("confirmPassword")}
-                className={form.formState.errors.confirmPassword ? "border-destructive focus-visible:ring-destructive/20" : ""}
-              />
-              {form.formState.errors.confirmPassword && (
-                <p className="text-[0.8rem] font-medium text-destructive">
-                  {form.formState.errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              Sign In
             </Button>
           </div>
         </form>
       </div>
 
       <p className="px-8 text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link
-          href="/login"
+          href="/register"
           className="underline underline-offset-4 hover:text-primary"
         >
-          Sign In
+          Sign Up
         </Link>
       </p>
 
