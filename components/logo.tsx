@@ -43,7 +43,7 @@ export function Logo({
 
   return (
     <div
-      className={cn("flex items-center gap-2 font-medium tracking-tight", className)}
+      className={cn("flex items-center gap-2 font-medium tracking-tight", !showText && "justify-center", className)}
       {...props}
     >
       <div 

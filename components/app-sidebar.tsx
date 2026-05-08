@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
@@ -17,6 +18,12 @@ import {
 } from "@/components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon } from "lucide-react"
 import { Logo } from "@/components/logo"
+import { useSidebar } from "@/components/ui/sidebar"
+
+function SidebarLogo() {
+  const { state } = useSidebar()
+  return <Logo size="md" text="Acme Inc." showText={state !== "collapsed"} />
+}
 
 const data = {
   user: {
@@ -30,7 +37,7 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "#",
+          url: "/dashboard",
           icon: <LayoutDashboardIcon />,
         },
         {
@@ -149,16 +156,23 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar 
+      // Options: 
+      // 'icon': shrinks to icons when collapsed
+      // 'offcanvas': slides out completely when collapsed
+      // 'none': static, non-collapsible
+      collapsible="icon" 
+      {...props}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              size="lg"
               render={
-                <a href="#">
-                  <Logo size="md" text="Acme Inc." />
-                </a>
+                <Link href="/dashboard">
+                  <SidebarLogo />
+                </Link>
               }
             />
           </SidebarMenuItem>
