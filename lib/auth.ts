@@ -71,12 +71,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       
       if (session.user) {
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.name = token.name;
+        session.user.email = token.email as string;
+        session.user.image = token.picture as string;
       }
 
       return session;
     },
-    async jwt({ token }) {
+    async jwt({ token, trigger, session }) {
       if (!token.sub) return token;
+
+      if (trigger === "update" && session) {
+        token.name = session.name;
+        token.email = session.email;
+        token.picture = session.image;
+        return token; // Return early so we don't overwrite with stale DB data
+      }
 
       const existingUser = await prisma.user.findUnique({
         where: { id: token.sub },
@@ -84,6 +94,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (!existingUser) return token;
 
+      token.name = existingUser.name;
+      token.email = existingUser.email;
+      token.picture = existingUser.image;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;

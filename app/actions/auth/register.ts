@@ -35,8 +35,7 @@ export async function registerUser(values: z.infer<typeof RegisterSchema>) {
     })
 
     return { success: "User created successfully" }
-  } catch (error) {
-    console.error("Registration error:", error)
+  } catch {
     return { error: "Something went wrong" }
   }
 }

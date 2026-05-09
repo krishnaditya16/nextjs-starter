@@ -57,8 +57,7 @@ export async function requestPasswordReset(email: string) {
     await sendPasswordResetEmail(email, token)
 
     return { success: "If an account exists, a reset link has been sent." }
-  } catch (error) {
-    console.error("Password reset request error:", error)
+  } catch {
     return { error: "Something went wrong" }
   }
 }
@@ -93,8 +92,7 @@ export async function resetPassword(values: z.infer<typeof resetPasswordSchema>)
     })
 
     return { success: "Password reset successful" }
-  } catch (error) {
-    console.error("Password reset error:", error)
+  } catch {
     return { error: "Something went wrong" }
   }
 }

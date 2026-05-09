@@ -1,15 +1,53 @@
 "use client"
 
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
+import { useState } from "react"
+import { Loader2 } from "lucide-react"
+
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { PasswordSchema, PasswordValues } from "@/schemas/settings"
+import { updatePassword } from "@/app/actions/settings"
 
 export function PasswordForm() {
-  function onSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    toast.success("Password updated successfully")
+  const [isPending, setIsPending] = useState(false)
+
+  const form = useForm<PasswordValues>({
+    resolver: zodResolver(PasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  })
+
+  async function onSubmit(values: PasswordValues) {
+    setIsPending(true)
+    try {
+      const result = await updatePassword(values)
+      if (result.success) {
+        toast.success(result.success)
+        form.reset()
+      } else {
+        toast.error(result.error)
+      }
+    } catch {
+      toast.error("Something went wrong")
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -22,24 +60,59 @@ export function PasswordForm() {
       </div>
       <Separator />
       
-      <form onSubmit={onSubmit} className="space-y-8">
-        <div className="space-y-2">
-          <Label htmlFor="current">Current Password</Label>
-          <Input id="current" type="password" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="new">New Password</Label>
-          <Input id="new" type="password" />
-          <p className="text-[0.8rem] text-muted-foreground">
-            Must be at least 8 characters long.
-          </p>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm New Password</Label>
-          <Input id="confirm" type="password" />
-        </div>
-        <Button type="submit">Update password</Button>
-      </form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="currentPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Current Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>New Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Must be at least 6 characters long.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm New Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Update password
+          </Button>
+        </form>
+      </Form>
     </div>
   )
 }
