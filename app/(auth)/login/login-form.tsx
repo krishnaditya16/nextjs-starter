@@ -5,12 +5,17 @@ import Link from "next/link"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 import { AuthLayout } from "@/components/auth-layout"
 import { login } from "@/app/actions/auth/login"
 
@@ -28,6 +33,7 @@ export function LoginForm() {
     defaultValues: {
       email: "",
       password: "",
+      code: "",
     },
   })
 
@@ -38,7 +44,6 @@ export function LoginForm() {
       const result = await login(data)
 
       if (result?.error) {
-        form.reset()
         toast.error(result.error)
         setIsLoading(false)
         return
@@ -71,19 +76,37 @@ export function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4">
             {showTwoFactor && (
-               <div className="grid gap-2">
-                <Label htmlFor="code">Two-Factor Code</Label>
-                <Input
-                  id="code"
-                  placeholder="123456"
-                  disabled={isLoading}
-                  {...form.register("code")}
+              <div className="grid gap-4 justify-items-center">
+                <Label htmlFor="code" className="text-center">Two-Factor Code</Label>
+                <Controller
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <InputOTP
+                      maxLength={6}
+                      disabled={isLoading}
+                      value={field.value}
+                      onChange={field.onChange}
+                    >
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  )}
                 />
                 {form.formState.errors.code && (
                   <p className="text-[0.8rem] font-medium text-destructive">
                     {form.formState.errors.code.message}
                   </p>
                 )}
+                <p className="text-xs text-muted-foreground text-center">
+                  Enter the 6-digit code from your authenticator app.
+                </p>
               </div>
             )}
             {!showTwoFactor && (

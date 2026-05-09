@@ -46,6 +46,7 @@ model User {
   emailVerified DateTime? @map("email_verified")
   image         String?
   password      String?
+  twoFactorSecret String? @map("two_factor_secret")
   isTwoFactorEnabled Boolean @default(false) @map("is_two_factor_enabled")
   twoFactorConfirmation TwoFactorConfirmation?
   accounts      Account[]

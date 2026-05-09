@@ -6,8 +6,7 @@ import bcrypt from "bcryptjs"
 
 import { signIn } from "@/lib/auth"
 import { prisma } from "@/lib/db"
-import { generateTwoFactorToken } from "@/lib/tokens"
-import { sendTwoFactorTokenEmail } from "@/lib/mail"
+import { verifyTwoFactorToken } from "@/lib/totp"
 
 import { LoginSchema } from "@/schemas"
 
@@ -34,29 +33,17 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     return { error: "Invalid credentials!" }
   }
 
-  if (existingUser.isTwoFactorEnabled && existingUser.email) {
+  if (existingUser.isTwoFactorEnabled) {
     if (code) {
-      const twoFactorToken = await prisma.twoFactorToken.findFirst({
-        where: { email: existingUser.email },
-      })
+      if (!existingUser.twoFactorSecret) {
+        return { error: "2FA is enabled but no secret is set!" }
+      }
 
-      if (!twoFactorToken) {
+      const isValid = await verifyTwoFactorToken(code, existingUser.twoFactorSecret)
+
+      if (!isValid) {
         return { error: "Invalid code!" }
       }
-
-      if (twoFactorToken.token !== code) {
-        return { error: "Invalid code!" }
-      }
-
-      const hasExpired = new Date(twoFactorToken.expires) < new Date()
-
-      if (hasExpired) {
-        return { error: "Code expired!" }
-      }
-
-      await prisma.twoFactorToken.delete({
-        where: { id: twoFactorToken.id },
-      })
 
       const existingConfirmation = await prisma.twoFactorConfirmation.findUnique({
         where: { userId: existingUser.id },
@@ -74,19 +61,22 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         },
       })
     } else {
-      const twoFactorToken = await generateTwoFactorToken(existingUser.email)
-      await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token)
-
       return { twoFactor: true }
     }
   }
 
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
       redirectTo: "/dashboard",
+      redirect: false,
     })
+
+    if (result?.error) {
+      return { error: "Invalid credentials!" }
+    }
+
     return { success: "Logged in!" }
   } catch (error) {
     if (error instanceof AuthError) {
