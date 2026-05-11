@@ -149,10 +149,23 @@ npx prisma studio
 If you want to remove the default **Article CRUD** and start with a cleaner base, you can run the following utility:
 
 ```bash
-node scripts/remove-articles.mjs
+npm run remove-crud-example
 ```
 
 This will automatically remove all article-related files, database models, and navigation items.
+
+---
+## 🎓 Learning & Mastery
+
+This starter kit includes a built-in **Skill** for AI assistants (like Antigravity) to help you build new features. 
+
+To initialize the learning resources, run:
+
+```bash
+npm run setup-skills
+```
+
+This sets up the **CRUD Mastery** skill in the `.agents/skills/` directory. You can ask your AI assistant to "Read the CRUD Mastery skill" to get step-by-step guidance and templates for building your own features.
 
 ---
 

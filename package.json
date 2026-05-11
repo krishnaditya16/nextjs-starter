@@ -2,12 +2,15 @@
   "name": "nextjs-starter",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest --reporter=verbose"
+    "test": "vitest --reporter=verbose",
+    "remove-crud-example": "node scripts/remove-crud-example.js",
+    "setup-skills": "node scripts/setup-skills.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
