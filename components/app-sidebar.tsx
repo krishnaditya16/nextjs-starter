@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, FileTextIcon, Settings2Icon } from "lucide-react"
+import {LayoutDashboardIcon, ListIcon, Settings2Icon } from "lucide-react"
 import { Logo } from "@/components/logo"
 import { useSession } from "next-auth/react"
 
@@ -46,11 +46,6 @@ const data = {
     {
       title: "Overview",
       items: [
-        {
-          title: "Article",
-          url: "/dashboard/articles",
-          icon: <FileTextIcon />,
-        },
         {
           title: "Add Menu",
           url: "#",

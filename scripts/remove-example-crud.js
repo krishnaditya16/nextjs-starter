@@ -6,6 +6,7 @@ const pathsToRemove = [
   'app/dashboard/articles',
   'app/actions/article.ts',
   'components/columns/article.tsx',
+  'schemas/article.ts',
   'tests/articles.test.ts',
 ];
 
@@ -46,7 +47,15 @@ async function run() {
     let sidebar = fs.readFileSync(sidebarPath, 'utf8');
     
     // Remove the Article item from the data object
-    sidebar = sidebar.replace(/\{\s*title:\s*"Article",[\s\S]*?\},/g, '');
+    sidebar = sidebar.replace(/\n\s*\{\s*title:\s*"Article",[\s\S]*?\},\n/g, '\n');
+    
+    // Remove FileTextIcon import if it's not used elsewhere (assuming it's only for Articles)
+    sidebar = sidebar.replace(/FileTextIcon,\s*/g, '');
+    sidebar = sidebar.replace(/,\s*FileTextIcon/g, '');
+    
+    // Cleanup empty lines
+    sidebar = sidebar.replace(/\n\s*\n\s*\n/g, '\n\n');
+    sidebar = sidebar.replace(/\[\s*\n\s*\n/g, '[\n');
     
     fs.writeFileSync(sidebarPath, sidebar);
     log('Updated components/app-sidebar.tsx');

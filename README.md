@@ -15,11 +15,6 @@ A production-ready, feature-rich Next.js starter kit designed for speed, securit
 - **Dynamic Breadcrumbs**: Automatic breadcrumb generation based on route structure.
 - **Data Tables**: Powerful, sortable, and searchable tables using TanStack Table.
 
-### 📝 Content Management (Article CRUD)
-- **Full CRUD**: Create, read, update, and delete articles.
-- **Dynamic Slugs**: Automatic slug generation from titles.
-- **Status Management**: Publish/Unpublish toggle for content control.
-
 ### ⚙️ User Settings & Profile
 - **Profile Management**: Update name and avatar.
 - **Image Uploads**: Path-based storage with automatic cleanup of old assets.
@@ -27,7 +22,7 @@ A production-ready, feature-rich Next.js starter kit designed for speed, securit
 
 ### 🧪 Professional Testing Suite
 - **Vitest Integration**: Blazing fast unit and integration tests.
-- **Action Testing**: Comprehensive testing for Server Actions (Auth, Articles, Settings).
+- **Action Testing**: Comprehensive testing for Server Actions (Auth, Settings).
 - **Mocking Layer**: Standardized Prisma and Auth mocks for isolated testing.
 - **Verbose Reporting**: Detailed test output for clear development feedback.
 
@@ -144,15 +139,19 @@ npx prisma studio
 
 ---
 
-## 🧹 Stripping Features
+## 📦 Example CRUD Management
 
-If you want to remove the default **Article CRUD** and start with a cleaner base, you can run the following utility:
+This project comes with a fully functional **Article CRUD** example that can be added or removed with a single command. This is useful for learning the patterns of this starter kit or starting with a completely clean base.
 
+### Add Example CRUD
 ```bash
-npm run remove-crud-example
+npm run crud-example:add
 ```
 
-This will automatically remove all article-related files, database models, and navigation items.
+### Remove Example CRUD (Clean Base)
+```bash
+npm run crud-example:remove
+```
 
 ---
 ## 🎓 Learning & Mastery

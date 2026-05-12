@@ -51,7 +51,6 @@ model User {
   twoFactorConfirmation TwoFactorConfirmation?
   accounts      Account[]
   sessions      Session[]
-  articles      Article[]
 
   @@map("users")
 }
@@ -94,16 +93,22 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
-model Article {
-  id        String   @id @default(cuid())
-  title     String
-  content   String   @db.Text
-  slug      String   @unique
-  published Boolean  @default(false)
-  authorId  String   @map("author_id")
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("articles")
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

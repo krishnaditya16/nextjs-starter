@@ -7,10 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
     "test": "vitest --reporter=verbose",
-    "remove-crud-example": "node scripts/remove-crud-example.js",
-    "setup-skills": "node scripts/setup-skills.js"
+    "setup-skills": "node scripts/setup-skills.js",
+    "crud-example:add": "node scripts/add-crud-example.js",
+    "crud-example:remove": "node scripts/remove-example-crud.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
