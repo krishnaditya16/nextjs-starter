@@ -43,14 +43,16 @@ export const createArticle = async (values: z.infer<typeof ArticleSchema>) => {
   const { title, content, slug, published } = validatedFields.data
 
   try {
-    await prisma.article.create({
-      data: {
-        title,
-        content,
-        slug,
-        published,
-        authorId: session.user.id!,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.article.create({
+        data: {
+          title,
+          content,
+          slug,
+          published,
+          authorId: session.user.id!,
+        },
+      })
     })
 
     revalidatePath("/dashboard/articles")
@@ -79,14 +81,16 @@ export const updateArticle = async (id: string, values: z.infer<typeof ArticleSc
   const { title, content, slug, published } = validatedFields.data
 
   try {
-    await prisma.article.update({
-      where: { id },
-      data: {
-        title,
-        content,
-        slug,
-        published,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.article.update({
+        where: { id },
+        data: {
+          title,
+          content,
+          slug,
+          published,
+        },
+      })
     })
 
     revalidatePath("/dashboard/articles")
@@ -107,8 +111,10 @@ export const deleteArticle = async (id: string) => {
   }
 
   try {
-    await prisma.article.delete({
-      where: { id },
+    await prisma.$transaction(async (tx) => {
+      await tx.article.delete({
+        where: { id },
+      })
     })
 
     revalidatePath("/dashboard/articles")

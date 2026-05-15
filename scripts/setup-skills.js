@@ -29,10 +29,21 @@ This skill provides a systematic approach to creating new data-driven features i
 
 1. **Schema Definition**: Add your model to \`prisma/schema.prisma\`.
 2. **Validation Schema**: Create a new file in \`schemas/\` using \`schema-template.ts\`.
-3. **Server Actions**: Create logic in \`app/actions/\` using \`action-template.ts\`.
+3. **Server Actions**: Create logic in \`app/actions/\` using \`action-template.ts\`. **Always wrap mutation operations (create, update, delete) in \`prisma.$transaction\`** to ensure data integrity and atomicity.
 4. **Column Definitions**: Define your table columns in \`components/columns/\` using \`columns-template.tsx\`.
 5. **Form Component**: Build your UI form using \`form-template.tsx\`.
 6. **Dashboard Page**: Assemble the feature in \`app/dashboard/\` using \`page-template.tsx\` with the \`DataTable\` component.
+
+## 🔒 Transaction Best Practice
+
+When creating server actions that modify data, use the **Interactive Transaction** pattern. Even for single operations, this provides a consistent structure and makes it easier to add secondary operations (like logging or multi-table updates) later without breaking atomicity.
+
+\`\`\`tsx
+await prisma.$transaction(async (tx) => {
+  await tx.model.create({ data: { ... } });
+  // Add other dependent operations here
+});
+\`\`\`
 
 ## 📦 Reference Templates (\`resources/\`)
 
@@ -72,11 +83,13 @@ export async function createItem(values: ItemValues) {
   if (!validatedFields.success) return { error: "Invalid fields" };
 
   try {
-    await prisma.yourModel.create({
-      data: {
-        ...validatedFields.data,
-        authorId: session.user.id,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.yourModel.create({
+        data: {
+          ...validatedFields.data,
+          authorId: session.user.id,
+        },
+      });
     });
 
     revalidatePath("/dashboard/your-route");
@@ -91,9 +104,12 @@ export async function deleteItem(id: string) {
   if (!session?.user) return { error: "Unauthorized" };
 
   try {
-    await prisma.yourModel.delete({
-      where: { id, authorId: session.user.id }
+    await prisma.$transaction(async (tx) => {
+      await tx.yourModel.delete({
+        where: { id, authorId: session.user.id }
+      });
     });
+
     revalidatePath("/dashboard/your-route");
     return { success: "Deleted successfully!" };
   } catch (error) {

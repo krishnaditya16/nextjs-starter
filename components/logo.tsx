@@ -43,6 +43,7 @@ export function Logo({
         "h-full w-auto object-contain transition-all",
         variant === "white" ? "brightness-0 invert" : "dark:brightness-0 dark:invert"
       )}
+      style={{ width: 'auto' }}
       priority
     />
   )
