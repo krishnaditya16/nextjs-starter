@@ -35,7 +35,7 @@ export function Logo({
 
   const defaultIcon = (
     <Image
-      src={isIcon ? "/logo-icon.png" : "/logo.png"}
+      src={isIcon ? "/logo-icon.svg" : "/logo.svg"}
       alt={label}
       width={!isIcon ? (height * 218 / 40) : height}
       height={height}
