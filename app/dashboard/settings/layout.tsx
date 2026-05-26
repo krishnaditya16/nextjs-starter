@@ -4,8 +4,11 @@ import { Separator } from "@/components/ui/separator"
 import { SettingsSidebarNav } from "@/components/settings-sidebar-nav"
 
 export const metadata: Metadata = {
-  title: "Settings",
-  description: "Advanced form example using react-hook-form and zods.",
+  title: {
+    default: "Settings",
+    template: `%s | ${process.env.NEXT_PUBLIC_APP_NAME || "Acme Inc"}`,
+  },
+  description: "Manage your account settings and preferences.",
 }
 
 const sidebarNavItems = [

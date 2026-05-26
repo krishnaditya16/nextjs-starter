@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useState } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -142,13 +142,16 @@ const chartConfig = {
 
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
+  const [timeRange, setTimeRange] = useState("90d")
 
-  React.useEffect(() => {
+  const [prevIsMobile, setPrevIsMobile] = useState<boolean | undefined>(isMobile)
+  if (isMobile !== prevIsMobile) {
+    setPrevIsMobile(isMobile)
     if (isMobile) {
       setTimeRange("7d")
     }
-  }, [isMobile])
+  }
+
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)

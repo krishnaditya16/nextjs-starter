@@ -1,36 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Premium Next.js 16 Starter Kit
 
-## Getting Started
+A production-ready, feature-rich Next.js starter kit designed for speed, security, and aesthetics. Built with the latest technologies to provide a seamless development experience for modern web applications.
 
-First, run the development server:
+## ✨ Features
 
+### 🔐 Robust Authentication (NextAuth v5)
+- **Credential Login/Register**: Secure email and password authentication.
+- **Two-Factor Authentication (2FA)**: Support for TOTP (authenticator apps).
+- **Password Reset**: Full email-based reset flow.
+- **Secure Sessions**: JWT strategy with optimized synchronization.
+
+### 🏠 Modern Dashboard
+- **Responsive Sidebar**: Collapsible, mobile-friendly navigation with active state tracking.
+- **Dynamic Breadcrumbs**: Automatic breadcrumb generation based on route structure.
+- **Data Tables**: Powerful, sortable, and searchable tables using TanStack Table.
+
+### ⚙️ User Settings & Profile
+- **Profile Management**: Update name and avatar.
+- **Image Uploads**: Path-based storage with automatic cleanup of old assets.
+- **Security Settings**: dedicated password update interface with strict validation.
+
+### 🧪 Professional Testing Suite
+- **Vitest Integration**: Blazing fast unit and integration tests.
+- **Action Testing**: Comprehensive testing for Server Actions (Auth, Settings).
+- **Mocking Layer**: Standardized Prisma and Auth mocks for isolated testing.
+- **Verbose Reporting**: Detailed test output for clear development feedback.
+
+### 🎨 Premium UI/UX
+- **Shadcn UI**: Beautiful, accessible components out of the box.
+- **Tailwind CSS 4**: The latest in utility-first styling.
+- **Dark Mode Support**: Seamless transition between light and dark themes.
+- **Optimized Typography**: Professional Geist font integration.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16+](https://nextjs.org/) (App Router)
+- **Database**: [Prisma 7+](https://www.prisma.io/) (MySQL/MariaDB)
+- **Auth**: [NextAuth.js v5 (Beta)](https://authjs.dev/)
+- **UI Components**: [Shadcn UI](https://ui.shadcn.com/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **State Management**: [TanStack Query 5+](https://tanstack.com/query)
+- **Frontend Library**: [React 19+](https://react.dev/)
+- **Testing**: [Vitest 4+](https://vitest.dev/) + [React Testing Library](https://testing-library.com/)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js 18+ 
+- MySQL or MariaDB instance
+
+### 2. Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd nextjs-starter
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Environment Setup
+Create a `.env` file in the root directory and configure the following:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+# App
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_NAME="Acme Inc"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Database
+DATABASE_URL="mysql://user:password@localhost:3306/nextjs_starter"
 
-## Learn More
+# Authentication
+AUTH_SECRET="your-secret-here" # Generate with: npx auth secret
 
-To learn more about Next.js, take a look at the following resources:
+# Mail (SMTP)
+MAIL_HOST="your-smtp-host"
+MAIL_PORT=2525
+MAIL_USER="your-user"
+MAIL_PASSWORD="your-password"
+MAIL_FROM_ADDRESS="noreply@example.com"
+MAIL_FROM_NAME="Support Team"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Database Initialization
+Reset the database (if needed) and run migrations:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Reset and apply migrations
+npx prisma migrate dev --name init
 
-## Deploy on Vercel
+# Seed initial data (Admin User)
+npx prisma db seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Default Admin Credentials:
+- **Email**: `admin@example.com`
+- **Password**: `password`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 💻 Development
+
+### Run Local Server
+```bash
+npm run dev
+```
+
+### Run Tests
+```bash
+# Run all tests with verbose output
+npm test
+```
+
+### Prisma Studio
+```bash
+npx prisma studio
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+├── app/               # Next.js App Router (Pages & Actions)
+│   ├── (auth)/        # Authentication routes
+│   ├── api/           # API Route Handlers
+│   ├── dashboard/     # Dashboard protected routes
+│   └── actions/       # Server Actions (Business Logic)
+├── components/        # Reusable UI components
+├── lib/               # Shared utilities & configurations
+├── prisma/            # Database schema & migrations
+├── schemas/           # Zod validation schemas
+├── tests/             # Vitest integration tests
+└── public/            # Static assets & uploads
+```
+
+---
+
+## 📦 Example CRUD Management
+
+This project comes with a fully functional **Article CRUD** example that can be added or removed with a single command. This is useful for learning the patterns of this starter kit or starting with a completely clean base.
+
+### Add Example CRUD
+```bash
+npm run crud-example:add
+```
+
+### Remove Example CRUD (Clean Base)
+```bash
+npm run crud-example:remove
+```
+
+---
+## 🎓 Learning & Mastery
+
+This starter kit includes a built-in **Skill** for AI assistants (like Antigravity) to help you build new features. 
+
+To initialize the learning resources, run:
+
+```bash
+npm run setup-skills
+```
+
+This sets up the **CRUD Mastery** skill in the `.agents/skills/` directory. You can ask your AI assistant to "Read the CRUD Mastery skill" to get step-by-step guidance and templates for building your own features.
+
+---
+
+## 📄 License
+This project is licensed under the MIT License.

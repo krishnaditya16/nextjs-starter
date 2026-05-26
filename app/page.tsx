@@ -1,4 +1,9 @@
+import { Metadata } from "next";
 import { Logo } from "@/components/logo";
+
+export const metadata: Metadata = {
+  description: "A professional Next.js starter with authentication, dashboard, and settings.",
+}
 
 export default function Home() {
   return (
