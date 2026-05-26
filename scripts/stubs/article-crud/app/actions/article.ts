@@ -43,16 +43,22 @@ export const createArticle = async (values: z.infer<typeof ArticleSchema>) => {
   const { title, content, slug, published } = validatedFields.data
 
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.article.create({
-        data: {
-          title,
-          content,
-          slug,
-          published,
-          authorId: session.user.id!,
-        },
-      })
+     const userExists = await prisma.user.findUnique({
+       where: { id: session.user.id }
+     })
+
+     if (!userExists) {
+       return { error: "User session is stale (user not found in database). Please log out and sign in again." }
+     }
+
+    await prisma.article.create({
+      data: {
+        title,
+        content,
+        slug,
+        published,
+        authorId: session.user.id!,
+      },
     })
 
     revalidatePath("/dashboard/articles")
@@ -81,16 +87,14 @@ export const updateArticle = async (id: string, values: z.infer<typeof ArticleSc
   const { title, content, slug, published } = validatedFields.data
 
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.article.update({
-        where: { id },
-        data: {
-          title,
-          content,
-          slug,
-          published,
-        },
-      })
+    await prisma.article.update({
+      where: { id },
+      data: {
+        title,
+        content,
+        slug,
+        published,
+      },
     })
 
     revalidatePath("/dashboard/articles")
@@ -111,10 +115,8 @@ export const deleteArticle = async (id: string) => {
   }
 
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.article.delete({
-        where: { id },
-      })
+    await prisma.article.delete({
+      where: { id },
     })
 
     revalidatePath("/dashboard/articles")

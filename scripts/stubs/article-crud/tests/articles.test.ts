@@ -22,6 +22,11 @@ describe('Article Actions', () => {
       user: { id: 'admin-1', role: 'ADMIN', email: 'admin@test.com', name: 'Admin' },
       expires: '' 
     } as Session)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
+      id: 'admin-1',
+      name: 'Admin',
+      email: 'admin@test.com',
+    } as any)
   })
 
   it('should get all articles', async () => {
