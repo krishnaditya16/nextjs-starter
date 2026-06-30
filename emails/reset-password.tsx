@@ -12,7 +12,7 @@ import {
   Hr,
   Link,
   Tailwind,
-} from "@react-email/components";
+} from "react-email";
 
 interface ResetPasswordEmailProps {
   resetLink: string;
