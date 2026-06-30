@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,7 +25,6 @@ type LoginFormValues = z.infer<typeof LoginSchema>
 export function LoginForm() {
   const [showTwoFactor, setShowTwoFactor] = useState(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const router = useRouter()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginSchema),
@@ -56,8 +54,7 @@ export function LoginForm() {
       }
 
       toast.success("Signed in successfully")
-      router.push("/dashboard")
-      router.refresh()
+      window.location.assign("/dashboard")
     } catch {
       toast.error("Something went wrong. Please try again.")
       setIsLoading(false)
